@@ -1,0 +1,30 @@
+{
+  "manifest_version": 1,
+  "version": "1.0.0",
+  "type": "APP",
+  "name": {
+    "ja": "アクションによって値を自動セット-プラグイン",
+    "en": "Automatically set values by action-PLUG-IN",
+    "zh": "通過動作自動設置值"
+  },
+  "description": {
+    "ja": "設定したフィールドの値をアクションによって自動セットすることができるプラグインです",
+    "en": "It is a plug-in that can automatically set the value of the set field by action",
+    "zh": "它是一個外掛程式，可以通過動作自動設置設置欄位的值"
+  },
+  "icon": "image/icon_push.png",
+  "homepage_url": {},
+  "desktop": {
+    "js": ["js/desktop.js"],
+    "css": []
+  },
+  "mobile": {
+    "js": ["js/mobile.js"],
+    "css": []
+  },
+  "config": {
+    "html": "html/config.html",
+    "js": ["js/kintone-config-helper.js", "https://js.cybozu.com/kintone-rest-api-client/5.5.2/KintoneRestAPIClient.min.js", "js/config.bunble.js"],
+    "css": ["css/51-modern-default.css", "js/config.css"]
+  }
+}

@@ -5,8 +5,8 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 module.exports = {
   entry: {
     'config': './src/js/config/index.jsx',
-    'desktop': './src/js/desktop/index.js',
-    'mobile': './src/js/mobile/index.js'
+    // 'desktop': './src/js/desktop/index.js',
+    // 'mobile': './src/js/mobile/index.js'
   },
   output: {
     path: path.resolve(__dirname, 'plugin', 'js'),
@@ -32,17 +32,17 @@ module.exports = {
             ]
           }
         }
-      },
+      },    
       {
-        test: /\.(scss|sass\css)$/i,
+        test: /\.(scss|sass|css)$/i,
         use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
-      }
+      },            
     ]
   },
   plugins: [
     new kintonePlugin({
       manifestJSONPath: './plugin/manifest.json',
-      privateKeyPath: './plugin/xxxx.ppk',
+      privateKeyPath: './plugin/didkgnjhijlbenpmlnhebkhindfoloec.ppk',
       pluginZipPath: (id, manifest) => `dist/plugin.${manifest.version}.zip`
     }),
     new MiniCssExtractPlugin({
@@ -53,6 +53,7 @@ module.exports = {
     extensions: ['.jsx', '.js']
   },
   externals: {
-    "kintoneConfigHelper": 'KintoneConfigHelper'
+    "kintoneConfigHelper": 'KintoneConfigHelper',
+    "KintoneRestAPIClient": 'KintoneRestAPIClient'
   }
 }
