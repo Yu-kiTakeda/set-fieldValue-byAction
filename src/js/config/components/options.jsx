@@ -23,7 +23,7 @@ const InnerItem = styled(Paper)(({theme}) => ({
   padding: theme.spacing(1),  
 }));
 
-export default function Options({options, setOptions, apps, appActions, setAppActions, getActions, fields, initialOption}) {    
+export default function Options({options, setConfigs, apps, appActions, getActions, fields, initialOption}) {    
   const [allUsers, setAllUsers] = React.useState([]);
   const [allOrganizations, setAllOrganizations] = React.useState([]);
   const [allGroups, setAllGroups] = React.useState([]);
@@ -62,8 +62,8 @@ export default function Options({options, setOptions, apps, appActions, setAppAc
     let insertAction = [];
     if(value) insertAction = await getActions(value.id).then((resp) => Object.keys(resp.actions).map((actProp) => { return {id: resp.actions[actProp].id, name: resp.actions[actProp].name} }));
     newAppActions[index] = insertAction;
-    setAppActions(newAppActions);
-    setOptions(newOptions);
+    let newConfigs = {options: newOptions, appActions: newAppActions};
+    setConfigs(newConfigs);
   }
 
   function hundleChangeAction(value, index) {
@@ -71,7 +71,8 @@ export default function Options({options, setOptions, apps, appActions, setAppAc
     const id = value ? value.id : null;
     const name = value ? value.name : '';
     newOptions[index].action = {id, name};
-    setOptions(newOptions);
+    let newConfigs = {options: newOptions, appActions};
+    setConfigs(newConfigs);
   }
 
   function hundleChangePutValueField(valueObj, optIndex, index) {
@@ -81,46 +82,53 @@ export default function Options({options, setOptions, apps, appActions, setAppAc
     newOptions[optIndex]['putValueFields'][index].code =  code;
     newOptions[optIndex]['putValueFields'][index].type =  type;
     newOptions[optIndex]['putValueFields'][index].value = multiSelectFieldTypes.indexOf(fields[fields.findIndex((field) => field.code === code)].type) >= 0 ? [] : null;
-    setOptions(newOptions);
+    let newConfigs = {options: newOptions, appActions};
+    setConfigs(newConfigs);
   }
 
   function hundleChangePutValue(valueObj, optIndex, index) {
     let newOptions = [...options];
     newOptions[optIndex]['putValueFields'][index].value = valueObj && valueObj.value;
-    setOptions(newOptions);
+    let newConfigs = {options: newOptions, appActions};
+    setConfigs(newConfigs);
   }
 
   function hundleChangePutValues(values, optIndex, index) {
     let newOptions = [...options];
     newOptions[optIndex]['putValueFields'][index].value = values && values.map((valueObj) => valueObj.value);
-    setOptions(newOptions);
+    let newConfigs = {options: newOptions, appActions};
+    setConfigs(newConfigs);
   }
 
   function hundleClickAddPutValueField(optIdx, idx) {
     let newOptions = [...options];
     newOptions[optIdx].putValueFields.splice(idx+1, 0, {...initialOption.putValueFields[0]});
-    setOptions(newOptions);
+    let newConfigs = {options: newOptions, appActions};
+    setConfigs(newConfigs);
   }
 
   function hundleClickDelPutValueField(optIdx, idx) {
     let newOptions = [...options];
     newOptions[optIdx].putValueFields.splice(idx, 1);
-    setOptions(newOptions);
+    let newConfigs = {options: newOptions, appActions};
+    setConfigs(newConfigs);
   }
   
   function hundleClickAddOption(index) {
     let newOptions = [...options];
     newOptions.splice(index+1, 0, JSON.parse(JSON.stringify(initialOption)));
-    setOptions(newOptions);
+    
     let newAppActions = [...appActions];
     newAppActions.splice(index+1, 0, []);
-    setAppActions(newAppActions);
+    let newConfigs = {options: newOptions, appActions: newAppActions};
+    setConfigs(newConfigs);
   }
 
   function hundleClickDelOption(index) {
     let newOptions = [...options];
     newOptions.splice(index, 1);
-    setOptions(newOptions);
+    let newConfigs = {options: newOptions, appActions};
+    setConfigs(newConfigs);
   }  
 
   function getUsers(offset) {
@@ -180,7 +188,8 @@ export default function Options({options, setOptions, apps, appActions, setAppAc
   function hundleChangeText(value, optIdx, idx) {
     let newOptions = [...options];
     newOptions[optIdx].putValueFields[idx].value = value ? value : null;
-    setOptions(newOptions);
+    let newConfigs = {options: newOptions, appActions};
+    setConfigs(newConfigs);
   }
 
   return (

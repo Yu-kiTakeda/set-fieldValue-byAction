@@ -5,7 +5,8 @@
   'use strict';
 
   var configObj = kintone.plugin.app.getConfig(PLUGIN_ID);
-  var options = configObj.options ? JSON.parse(configObj.options) : [];
+  var configs = configObj.configs && JSON.parse(configObj.configs);
+  var options = configs ? configs.options : [];
 
   var acountSelectFieldsType = ['USER_SELECT', 'ORGANIZATION_SELECT', 'GROUP_SELECT'];
 /**

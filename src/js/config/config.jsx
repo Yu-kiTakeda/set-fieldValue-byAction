@@ -47,17 +47,15 @@ export default function Config ({pluginId}) {
   const [apps, setApps] = React.useState([]);
   // 適用先アプリのフィールド一覧
   const [fields_thisApp, setFields_thisApp] = React.useState([]);
-  // アプリの設定値
-  const [options, setOptions] = React.useState([initialOption]);      
-  // アプリアクションの一覧
-  const [appActions, setAppActions] = React.useState(new Array(options.length).fill([]));
+
+  const [configs, setConfigs] = React.useState({options: [initialOption], appActions: [initialOption].map(opt => [])});  
 
   const excludeFieldTypes = ['CATEGORY', 'ステータス', 'RECORD_NUMBER', '__ID__', 'CREATED_TIME', 'CREATOR', 'STATUS_ASSIGNEE', 'UPDATED_TIME', 'MODIFIER', '__REVISION__', 'FILE', 'CALC'];
 
   const fields = fields_thisApp.filter(field => excludeFieldTypes.indexOf(field.type) < 0);
 
   function hundleClickSave() {
-    kintone.plugin.app.setConfig({options: JSON.stringify(options)});
+    kintone.plugin.app.setConfig({configs: JSON.stringify(configs)});
   }
 
   function hundleClickCancel() {
@@ -75,21 +73,25 @@ export default function Config ({pluginId}) {
             
     // コンフィグ情報の取得
     const configObj = kintone.plugin.app.getConfig(pluginId);
-    if(configObj.options) {
-      const newOptions = JSON.parse(configObj.options).map(option => optionInit(option));
-      setOptions(newOptions);
+    if(configObj.configs) {
+      let newConfigs = JSON.parse(configObj.configs);
+      if(newConfigs.options) {            
+        const newOptions = newConfigs.options.map(option => optionInit(option));
+        newConfigs.options = newOptions;
       
-      /* アクションの取得 */
-      const newAppActions = newOptions.map(async (opt) => {
-        let actions = [];
-        if(opt.app.id) {
-          actions = await getActions(opt.app.id).then((resp) => Object.keys(resp.actions).map((actProp) => { return {id: resp.actions[actProp].id, name: resp.actions[actProp].name} }));
-        }
-        return actions;
-      });    
-      Promise.all(newAppActions).then((appActions) => {
-        setAppActions(appActions);
-      });
+        /* アクションの取得 */
+        const newAppActions = newOptions.map(async (opt) => {
+          let actions = [];
+          if(opt.app.id) {
+            actions = await getActions(opt.app.id).then((resp) => Object.keys(resp.actions).map((actProp) => { return {id: resp.actions[actProp].id, name: resp.actions[actProp].name} }));
+          }
+          return actions;
+        });    
+        Promise.all(newAppActions).then((appActions) => {
+          newConfigs.appActions = appActions;
+          setConfigs(newConfigs);
+        });
+      }
     };          
   }, []);  
 
@@ -114,11 +116,10 @@ export default function Config ({pluginId}) {
         <Container>
           <Title title={pluginSettings.title} description={pluginSettings.description} />
           <Options 
-            options={options} 
-            setOptions={(options) => {setOptions(options);} } 
+            options={configs.options} 
+            setConfigs={(configs) => {setConfigs(configs);} } 
             apps={apps}
-            appActions={appActions}
-            setAppActions={(actions) => {setAppActions(actions);}}
+            appActions={configs.appActions}            
             getActions={getActions}
             fields={fields} 
             initialOption={initialOption} 
